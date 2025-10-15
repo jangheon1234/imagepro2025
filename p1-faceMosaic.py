@@ -1,4 +1,5 @@
 # 얼굴인식후 모자이크 처리 : 익명화
+
 import cv2
 import numpy as np
 from PIL import ImageFont, ImageDraw, Image

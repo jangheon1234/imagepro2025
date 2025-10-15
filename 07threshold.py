@@ -1,0 +1,68 @@
+# 2025.10.15
+# 이미지 분석 : threshold
+# threshold : 문턱값
+
+import cv2
+import numpy as np
+
+img = cv2.imread('./image_samples/gray_gradient.jpg', cv2.IMREAD_GRAYSCALE)
+thresh_np = np.zeros_like(img)
+# 중간숫자 : 127
+# 첫번째 방법
+thresh_np[img > 127] = 255
+thresh_np[(img > 128) & (img <= 192)] = 128
+thresh_np[(img > 64) & (img <= 128)] = 64
+# 두번째 방법
+thresh_np = np.zeros_like(img)
+thresh_np[img > 64] = 64
+thresh_np[img > 128] = 128
+thresh_np[img > 192] = 255
+# 세번째 방법
+thresh_np = np.zeros_like(img)
+print(img.shape)
+ysize, xsize = img.shape
+for x in range(xsize):
+    for y in range(ysize):
+        if(img[y,x] > 64):
+            thresh_np[y, x] = 64
+        if (img[y, x] > 128):
+            thresh_np[y, x] = 128
+        if (img[y, x] > 192):
+            thresh_np[y, x] = 192
+        if (img[y, x] > 255):
+            thresh_np[y, x] = 255
+
+_, thresh_cv = cv2.threshold(img, 10, 255, cv2.THRESH_BINARY)
+
+cv2.imshow("thresh_np", thresh_np)
+cv2.imshow("original", img)
+cv2.imshow("thresh_cv", thresh_cv)
+cv2.waitKey()
+cv2.destroyAllWindows()
+
+# 실전에 적용 binary threshold
+img = cv2.imread('./image_samples/scaned_paper.jpg', cv2.IMREAD_GRAYSCALE)
+_, thresh_cv80 = cv2.threshold(img, 80, 255, cv2.THRESH_BINARY)
+_, thresh_cv100 = cv2.threshold(img, 100, 255, cv2.THRESH_BINARY)
+_, thresh_cv120 = cv2.threshold(img, 120, 255, cv2.THRESH_BINARY)
+_, thresh_cv140 = cv2.threshold(img, 140, 255, cv2.THRESH_BINARY)
+t, thresh_otsu = cv2.threshold(img, -1, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+cv2.imshow("thresh_cv80", thresh_cv80)
+cv2.imshow("thresh_cv100", thresh_cv100)
+cv2.imshow("thresh_cv120", thresh_cv120)
+cv2.imshow("thresh_cv140", thresh_cv140)
+cv2.imshow('cv_otsu', thresh_otsu)
+cv2.imshow('paper', img)
+print(f't={t}')
+cv2.waitKey()
+cv2.destroyAllWindows()
+
+# 적응형 문턱값 제공 : 주위값에 따라 달라지게, blk_size = 9
+
+img = cv2.imread('./image_samples/sudoku.png', cv2.IMREAD_GRAYSCALE)
+t, thresh_otsu = cv2.threshold(img, -1, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+cv2.imshow('img',img)
+cv2.imshow('otsu', thresh_otsu)
+print(f't={t}')
+cv2.waitKey()
+cv2.destroyAllWindows()
